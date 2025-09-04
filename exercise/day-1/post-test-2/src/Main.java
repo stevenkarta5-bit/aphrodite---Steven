@@ -6,7 +6,7 @@ public class Main {
         int totalBiaya = 0;
 
         System.out.println("Input Jenis Kendaraan");
-        String kendaraan = input.nextLine();
+        String kendaraan = input.nextLine().toLowerCase();
 
         System.out.println("Input Lama parkir (per-jam)");
         int lamaParkir = input.nextInt();
