@@ -6,7 +6,7 @@
 
 ```
  a) `@Table`
- b) `@Entity`
+** b) `@Entity`**
  c) `@Column`
  d) `@Repository`
 
@@ -15,7 +15,7 @@
 2. Untuk membuat **primary key** otomatis bertambah di JPA, annotation yang digunakan adalah:
 
 ```
- a) `@GeneratedValue`
+** a) `@GeneratedValue`**
  b) `@Id`
  c) `@PrimaryKey`
  d) `@AutoIncrement`
@@ -25,7 +25,7 @@
 
 ```
    a) Menyediakan konfigurasi database
-   b) Menyediakan implementasi CRUD secara otomatis
+**b) Menyediakan implementasi CRUD secara otomatis**
    c) Membuat koneksi HTTP
    d) Mengganti controller
 ```
@@ -34,7 +34,7 @@
 
 ```
    a) `@Controller`
-   b) `@RestController`
+   **b) `@RestController`**
    c) `@Service`
    d) `@Component`
 ```
@@ -42,7 +42,7 @@
 5. Untuk membuat mapping endpoint `/api/users` dengan method GET, digunakan:
 
 ```
-   a) `@GetMapping("/api/users")`
+   **a)'@GetMapping("/api/users")`**
    b) `@PostMapping("/api/users")`
    c) `@RequestMapping("/api/users", method=POST)`
    d) `@RestMapping("/api/users")`
@@ -52,7 +52,7 @@
 
    ```
    a) Kolom boleh kosong
-   b) Kolom tidak boleh `null`
+ **b) Kolom tidak boleh `null`**
    c) Kolom tidak akan muncul di tabel
    d) Kolom adalah primary key
    ```
@@ -61,7 +61,7 @@
 
    ```
    a) Mengatur database schema
-   b) Melakukan dependency injection
+   **b) Melakukan dependency injection**
    c) Menambahkan logging
    d) Membuat endpoint REST
    ```
@@ -70,7 +70,7 @@
 
 ```
  a) `Entity`
- b) `Optional<Entity>`
+ **b) `Optional<Entity>`**
  c) `List<Entity>`
  d) `Map<String, Entity>`
 ```
@@ -79,7 +79,7 @@
 
 ```
  a) Mengambil query parameter dari URL
- b) Mengambil data JSON dari body request
+ **b) Mengambil data JSON dari body request**
  c) Mengambil header request
  d) Mengambil path variable
 ```
@@ -89,7 +89,7 @@
 ```
     a) MySQL
     b) PostgreSQL
-    c) H2
+    **c) H2**
     d) MongoDB
 ```
 
@@ -97,21 +97,48 @@
 
 ## Bagian B – True / False (5 Soal)
 
-1. `@Entity` hanya bisa digunakan sekali di satu aplikasi. (T/F)
-2. `@Repository` digunakan untuk menandai interface JPA repository. (T/F)
-3. `@RestController` sudah termasuk `@ResponseBody` secara default. (T/F)
-4. `JpaRepository` harus selalu diimplementasikan secara manual. (T/F)
-5. `@PathVariable` digunakan untuk mengambil nilai dari URL. (T/F)
+1. `@Entity` hanya bisa digunakan sekali di satu aplikasi. (T/F) **False**
+2. `@Repository` digunakan untuk menandai interface JPA repository. (T/F) **True**
+3. `@RestController` sudah termasuk `@ResponseBody` secara default. (T/F) **True**
+4. `JpaRepository` harus selalu diimplementasikan secara manual. (T/F) **False**
+5. `@PathVariable` digunakan untuk mengambil nilai dari URL. (T/F) **True**
 
 ---
 
 ## Bagian C – Isian Singkat (5 Soal)
 
-1. Sebutkan perbedaan utama antara `@Controller` dan `@RestController` di Spring Web.
-2. Apa perbedaan `save()` dan `saveAll()` di JPA?
-3. Bagaimana cara membuat relasi **OneToMany** antara `User` dan `Order` di JPA?
+1. Sebutkan perbedaan utama antara `@Controller` dan `@RestController` di Spring Web. "@controller" digunakan untuk web MVC tradisional, sedangkan @restcontroller untuk membuat RESTful API
+2. Apa perbedaan `save()` dan `saveAll()` di JPA? untuk save()
+save() adalah untuk menyimpan satu entitas saja ke database, sedangkan saveAll() untuk menyimpan banyak entitas sekaligus dalam database.
+3. Bagaimana cara membuat relasi **OneToMany** antara `User` dan `Order` di JPA? pada user :
+@Entity
+public class User {
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+}
+
+pada order:
+
+@Entity
+public class Order {
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+}
+
 4. Apa fungsi dari `application.properties` di Spring Boot?
+untuk mengatur konfigurasi aplikasi, seperti Koneksi database, port server, konfigurasi JPA, logging, path, securit
 5. Sebutkan 2 keuntungan menggunakan Spring Data JPA dibanding JDBC manual.
+- query method dengan nama method saja
+- otomatisasi operasi CRUD
 
 ---
 
@@ -123,9 +150,12 @@
 @Entity
 public class User {
    @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY) // ← Auto increment
    private Long id;
+
    private String name;
 }
+
 ```
 
 Buat agar id auto increment.
@@ -137,6 +167,13 @@ Buat agar id auto increment.
 ```java
 @RestController
 public class UserController {
+
+   private final UserRepository userRepository;
+
+   public UserController(UserRepository userRepository) {
+       this.userRepository = userRepository;
+   }
+
    @GetMapping("/users")
    public List<User> getAllUsers() {
        return userRepository.findAll();
@@ -151,7 +188,8 @@ Perbaiki error dependency injection `userRepository`.
 **Soal 3**
 
 ```java
-public interface UserRepository {
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
    User findByName(String name);
 }
 ```
@@ -164,7 +202,7 @@ Ubah agar bisa menggunakan Spring Data JPA.
 
 ```java
 @PostMapping("/users")
-public User addUser(User user) {
+public User addUser(@RequestBody User user) {
    return userRepository.save(user);
 }
 ```
@@ -177,13 +215,15 @@ Perbaiki agar data bisa diterima dari request body JSON.
 
 ```java
 @Entity
-public class Order {
+public class User {
    @Id
-   @GeneratedValue
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-   @ManyToOne
-   private User user;
+   private String name;
+
+   @OneToMany(mappedBy = "user")
+   private List<Order> orders;
 }
 ```
 
