@@ -1,4 +1,4 @@
-package com.example.mobil;
+package com.example.mobil.entity;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;

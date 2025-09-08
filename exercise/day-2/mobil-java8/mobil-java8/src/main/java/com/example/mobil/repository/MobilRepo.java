@@ -1,5 +1,6 @@
-package com.example.mobil;
+package com.example.mobil.repository;
 
+import com.example.mobil.entity.Mobil;
 import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
